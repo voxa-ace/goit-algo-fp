@@ -1,20 +1,10 @@
 import turtle
 import tkinter as tk
 
-def draw_tree(t, branch_length, shorten_by, angle, level):
-    """
-    Recursive function to draw a fractal tree with adjustable parameters.
-
-    Args:
-    t (turtle.Turtle): The turtle object used for drawing.
-    branch_length (float): The length of the current branch.
-    shorten_by (float): The factor by which the branch length is shortened.
-    angle (float): The angle between branches.
-    level (int): The current level of recursion.
-    """
-    if level > 0:
+def draw_tree(t, branch_length, shorten_by, angle, level, min_length=5):
+    if level > 0 and branch_length > min_length:
         t.forward(branch_length)
-        new_length = branch_length - shorten_by
+        new_length = max(branch_length - shorten_by, min_length)  # Preventing negative branch length
 
         t.left(angle)
         draw_tree(t, new_length, shorten_by, angle, level-1)
@@ -48,7 +38,7 @@ def main():
 
     if level is not None and level > 0:
         # Draw the tree
-        draw_tree(t, 100, 20, 30, level)
+        draw_tree(t, 100, 15, 45, level)
 
     # Closing the main Tkinter window after closing the turtle window
     root.destroy()

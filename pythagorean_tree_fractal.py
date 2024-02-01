@@ -1,50 +1,56 @@
 import turtle
 import tkinter as tk
+from tkinter import simpledialog
 
-def draw_tree(t, branch_length, shorten_by, angle, level, min_length=5):
-    if level > 0 and branch_length > min_length:
-        t.forward(branch_length)
-        new_length = max(branch_length - shorten_by, min_length)  # Preventing negative branch length
+# Global flag to control drawing
+drawing = True
 
-        t.left(angle)
-        draw_tree(t, new_length, shorten_by, angle, level-1)
-        
-        t.right(angle * 2)
-        draw_tree(t, new_length, shorten_by, angle, level-1)
-        
-        t.left(angle)
-        t.backward(branch_length)
+def pythagorean_tree(t, branch_length, angle, level):
+    """Draws a Pythagorean tree fractal using recursive function calls."""
+    global drawing  # Use the global flag
+    if level > 0 and drawing:
+        try:
+            t.forward(branch_length)
+            t.left(angle)
+            pythagorean_tree(t, branch_length / 1.2, angle, level - 1)
+            t.right(angle * 2)
+            pythagorean_tree(t, branch_length / 1.2, angle, level - 1)
+            t.left(angle)
+            t.backward(branch_length)
+        except turtle.Terminator:
+            pass
 
 def main():
-    """
-    Main function to set up the turtle environment and capture user input for recursion level.
-    """
+    """Sets up the turtle environment, captures user input for recursion level,
+    and initiates the drawing of the Pythagorean tree fractal."""
     # Set up the turtle
     t = turtle.Turtle()
-    screen = t.getscreen()
+    screen = turtle.Screen()
     screen.bgcolor("white")
     t.speed(0)
     t.color("black")
+
+    # Position of the turtle
     t.penup()
-    t.goto(0, -screen.window_height() // 4)
-    t.setheading(90)  # Point the turtle upwards
+    t.goto(0, -screen.window_height() // 3)
+    t.setheading(90)
     t.pendown()
 
-    # Set up user input for recursion level
-    root = tk.Tk()
-    root.withdraw()  # Hide the main window
-    level = tk.simpledialog.askinteger("Input", "Enter recursion level:",
-                                       minvalue=0, maxvalue=10)
+    # Capture user input for recursion level using tkinter's simpledialog
+    level = simpledialog.askinteger("Input", "Enter recursion level (1-10):", minvalue=1, maxvalue=10)
 
-    if level is not None and level > 0:
-        # Draw the tree
-        draw_tree(t, 100, 15, 45, level)
+    if level is not None:
+        # Draw the Pythagorean tree
+        pythagorean_tree(t, 100, 45, level)
 
-    # Closing the main Tkinter window after closing the turtle window
-    root.destroy()
-
-    # Close the turtle graphics window on click
-    screen.exitonclick()
+    try:
+        turtle.mainloop()  # Keeps the window open
+    except turtle.Terminator:
+        pass
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except tk.TclError:
+        # Handle the Tkinter error when the window is forcibly closed
+        drawing = False  # Stop the drawing

@@ -53,4 +53,4 @@ if __name__ == "__main__":
         main()
     except tk.TclError:
         # Handle the Tkinter error when the window is forcibly closed
-        drawing = False  # Stop the drawing
+        drawing = False
